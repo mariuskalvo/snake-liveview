@@ -3,7 +3,7 @@ defmodule Snake.Business.SnakeBody do
 
   defstruct [
     body: [],
-    head_direction: :right
+    head_direction: :down
   ]
 
   @type direction :: :left | :right | :up | :down
@@ -15,20 +15,8 @@ defmodule Snake.Business.SnakeBody do
   @spec new :: SnakeBody.t()
   def new(), do: %SnakeBody{body: [{0, 0}, {0, 1}, {0, 2}]}
 
-  @spec move(SnakeBody.t(), direction()) :: SnakeBody.t()
-  def move(snake_body, direction) do
-
-    noop_move =
-      blocked_by_body?(snake_body, direction) ||
-      heading_requested_direction(snake_body, direction)
-
-    case noop_move do
-      true  -> snake_body
-      false -> execute_move(snake_body, direction)
-    end
-  end
-
-  defp execute_move(%SnakeBody{body: body}, direction) do
+  @spec move(SnakeBody.t()) :: SnakeBody.t()
+  def move(%SnakeBody{body: body, head_direction: direction}) do
     [{x, y} | _tail] = body
 
     new_head = case direction do
@@ -46,18 +34,23 @@ defmodule Snake.Business.SnakeBody do
     }
   end
 
+  @spec change_direction(Snake.Business.SnakeBody.t(), direction()) :: Snake.Business.SnakeBody.t()
+  def change_direction(snake_body, direction) do
+    noop_move = blocked_by_body?(snake_body, direction)
+
+    case noop_move do
+      true  -> snake_body
+      false -> %SnakeBody{snake_body | head_direction: direction}
+    end
+  end
+
   defp blocked_by_body?(%SnakeBody{body: body}, direction) do
     [{head_x, head_y}, {second_x, second_y} | _tail] = body
     case direction do
-      :left   -> head_x < second_x
-      :right  -> head_x > second_x
+      :left   -> head_x > second_x
+      :right  -> head_x < second_x
       :up     -> head_y > second_y
       :down   -> head_y < second_y
     end
   end
-
-  defp heading_requested_direction(%SnakeBody{head_direction: head_direction}, direction) do
-    head_direction == direction
-  end
-
 end
