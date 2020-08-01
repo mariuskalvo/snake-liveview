@@ -1,8 +1,14 @@
-defmodule Snake.Business.SnakeMovement do
-  alias Snake.Business.SnakeBody
+defmodule Snake.Core.SnakeMovement do
+  alias Snake.Core.SnakeBody
 
   @spec move(SnakeBody.t(), non_neg_integer(), non_neg_integer()) :: SnakeBody.t()
-  def move(%SnakeBody{body: body, head_direction: direction}, squares_width, squares_height) do
+  def move(%SnakeBody{
+    body: body,
+    head_direction: direction},
+    squares_width,
+    squares_height,
+    consumed_fruit \\ false
+  ) do
     [{x, y} | _tail] = body
 
     new_head = case direction do
@@ -12,7 +18,11 @@ defmodule Snake.Business.SnakeMovement do
       :down   -> move_down(x, y, squares_height)
     end
 
-    new_tail = Enum.take(body, length(body) - 1)
+    new_tail = if consumed_fruit do
+      body
+    else
+      Enum.take(body, length(body) - 1)
+    end
 
     %SnakeBody{
       body: [new_head] ++ new_tail,

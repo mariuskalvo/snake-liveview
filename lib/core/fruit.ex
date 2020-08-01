@@ -1,5 +1,5 @@
-defmodule Snake.Business.Fruit do
-  alias Snake.Business.Fruit
+defmodule Snake.Core.Fruit do
+  alias Snake.Core.Fruit
 
   defstruct [
     location: {0, 0}

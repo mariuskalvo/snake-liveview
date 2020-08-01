@@ -1,6 +1,6 @@
-defmodule Snake.Business.SnakeMovementTest do
+defmodule Snake.Core.SnakeMovementTest do
   use ExUnit.Case
-  alias Snake.Business.{SnakeBody, SnakeMovement}
+  alias Snake.Core.{SnakeBody, SnakeMovement}
 
   @snake_heading_left   %SnakeBody{body: [{1, 1}, {2, 1}, {3, 1}], head_direction: :left}
   @snake_heading_right  %SnakeBody{body: [{3, 1}, {2, 1}, {1, 1}], head_direction: :right}

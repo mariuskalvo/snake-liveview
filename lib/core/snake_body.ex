@@ -1,5 +1,5 @@
-defmodule Snake.Business.SnakeBody do
-  alias Snake.Business.SnakeBody
+defmodule Snake.Core.SnakeBody do
+  alias Snake.Core.SnakeBody
 
   defstruct [
     body: [],

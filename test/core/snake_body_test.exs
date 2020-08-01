@@ -1,6 +1,6 @@
-defmodule Snake.Business.SnakeBodyTest do
+defmodule Snake.Core.SnakeBodyTest do
   use ExUnit.Case
-  alias Snake.Business.SnakeBody
+  alias Snake.Core.SnakeBody
 
   test "new SnakeBody creates body of three elements" do
     %SnakeBody{body: body} = SnakeBody.new()
