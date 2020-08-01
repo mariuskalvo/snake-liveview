@@ -60,4 +60,57 @@ defmodule Snake.Business.SnakeMovementTest do
     %SnakeBody{head_direction: actual_direction} = SnakeMovement.change_direction(snake_body, :left)
     assert actual_direction == :left
   end
+
+  test "move though wall at right side moves head to left side" do
+
+    width = 20
+    height = 20
+    snake = %SnakeBody{
+      head_direction: :right,
+      body: [{width - 1, 1}]
+    }
+
+    %SnakeBody{body: [{new_x, _new_y}]} = SnakeMovement.move(snake, width, height)
+    assert new_x == 0
+  end
+
+  test "move though wall at left side moves head to right side" do
+
+    width = 20
+    height = 20
+    snake = %SnakeBody{
+      head_direction: :left,
+      body: [{0, 1}]
+    }
+
+    %SnakeBody{body: [{new_x, _new_y}]} = SnakeMovement.move(snake, width, height)
+    assert new_x == width - 1
+  end
+
+  test "move though wall at upper side moves head to bottom side" do
+
+    width = 20
+    height = 20
+    snake = %SnakeBody{
+      head_direction: :up,
+      body: [{0, 0}]
+    }
+
+    %SnakeBody{body: [{_new_x, new_y}]} = SnakeMovement.move(snake, width, height)
+    assert new_y == height - 1
+  end
+
+  test "move though wall at bottom side moves head to upper side" do
+
+    width = 20
+    height = 20
+    snake = %SnakeBody{
+      head_direction: :down,
+      body: [{0, height - 1}]
+    }
+
+    %SnakeBody{body: [{_new_x, new_y}]} = SnakeMovement.move(snake, width, height)
+    assert new_y == 0
+  end
+
 end

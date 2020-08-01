@@ -18,13 +18,10 @@ defmodule SnakeWeb.SnakeLive do
     {:ok, assign(socket, snake: snake)}
   end
 
-
-
-
   @impl true
   def handle_info(:tick, socket) do
     snake = socket.assigns.snake
-    |> SnakeMovement.move()
+    |> SnakeMovement.move(@squares_width, @squares_height)
 
     {:noreply, assign(socket, %{snake: snake})}
   end
