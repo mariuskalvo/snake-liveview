@@ -1,30 +1,45 @@
 defmodule SnakeWeb.SnakeLive do
   use SnakeWeb, :live_view
   import Phoenix.HTML, only: [raw: 1]
-  alias Snake.Core.{SnakeBody, SnakeMovement, FruitHandler, Fruit}
+  alias Snake.Core.{SnakeBody, SnakeMovement, FruitHandler, Fruit, CollisionHandler}
 
   @square_size 20
   @squares_width 40
   @squares_height 22
+  @timer_interval_ms 60
+  @initial_snake_length 15
 
   @impl true
   def mount(_params, _session, socket) do
+    {:ok, assign(socket, initial_state())}
+  end
+
+  defp initial_state() do
     initial_fruit = FruitHandler.generate_fruit(
       @squares_width,
       @squares_height
     )
 
+    body = (@initial_snake_length - 1)..0
+    |> Enum.map(&{&1, 0})
+
     snake = %SnakeBody{
-      body: [{2, 0}, {1, 0}, {0, 0}],
+      body: body,
       head_direction: :right
     }
 
-    :timer.send_interval(100, self(), :tick)
-    {:ok, assign(socket,
+    timer_reference = case :timer.send_interval(@timer_interval_ms, self(), :tick) do
+      {:ok, timer_ref} -> timer_ref
+      {:error, reason} -> raise "Could not start game loop: #{reason}"
+    end
+
+    %{
       snake: snake,
       fruits: [initial_fruit],
-      points: 0
-    )}
+      points: 0,
+      game_over: false,
+      timer_reference: timer_reference
+    }
   end
 
   @impl true
@@ -32,7 +47,8 @@ defmodule SnakeWeb.SnakeLive do
     %{
       fruits: fruits,
       snake: snake,
-      points: points
+      points: points,
+      timer_reference: timer_reference
     } = socket.assigns
 
     %SnakeBody{body: [snake_head | _tail]} = snake
@@ -45,6 +61,11 @@ defmodule SnakeWeb.SnakeLive do
       @squares_height,
       consumed_fruit
     )
+
+    is_game_over = CollisionHandler.body_collision?(moved_snake)
+    if is_game_over do
+      :timer.cancel(timer_reference)
+    end
 
     updated_points = case consumed_fruit do
       true ->  points + 1
@@ -62,18 +83,23 @@ defmodule SnakeWeb.SnakeLive do
     {:noreply, assign(socket, %{
       snake: moved_snake,
       fruits: updated_fruits,
-      points: updated_points
+      points: updated_points,
+      game_over: is_game_over
     })}
   end
 
   @impl true
+  def handle_event("restart_game", _value, socket) do
+    {:noreply, assign(socket, initial_state())}
+  end
+
   def handle_event("keydown", %{"key" => "ArrowLeft"}, socket),   do: handle_direction_change(socket, :left)
   def handle_event("keydown", %{"key" => "ArrowRight"}, socket),  do: handle_direction_change(socket, :right)
   def handle_event("keydown", %{"key" => "ArrowUp"}, socket),     do: handle_direction_change(socket, :up)
   def handle_event("keydown", %{"key" => "ArrowDown"}, socket),   do: handle_direction_change(socket, :down)
   def handle_event("keydown", _args, socket), do: {:noreply, socket}
 
-  def handle_direction_change(socket, direction) do
+  defp handle_direction_change(socket, direction) do
     snake = socket.assigns.snake
     |> SnakeMovement.change_direction(direction)
     {:noreply, assign(socket, %{snake: snake})}
@@ -99,9 +125,16 @@ defmodule SnakeWeb.SnakeLive do
         <h1>Points: <%= @points %><h1>
         <%= raw svg_head() %>
         <%= raw fruit_shapes %>
+
         <%= raw body_rects %>
         <%= raw svg_foot() %>
+
       </div>
+      <%= if @game_over do %>
+        <button phx-click="restart_game">
+          GAME OVER - Try again
+        </button>
+      <% end %>
     """
   end
 
