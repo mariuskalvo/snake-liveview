@@ -1,0 +1,38 @@
+<%
+  fruit_locations = @fruits
+  |> Enum.map(fn %{location: location} -> location end)
+  |> Enum.map(fn {x, y} -> {x * @square_size, y * @square_size} end)
+
+  body_part_locations = @snake.body
+  |> Enum.map(fn {x, y} -> {x * @square_size, y * @square_size} end)
+%>
+
+<h1>Points: <%= @points %></h1>
+<div phx-window-keydown="keydown">
+  <svg
+    style="background: lightgray;"
+    width="<%= @square_size * @squares_width %>px"
+    height="<%= @square_size * @squares_height %>px"
+  >
+    <%= for {x, y} <- fruit_locations do %>
+    <rect
+      x="<%= x + 1%>" y="<%= y + 1%>"
+      style="fill:red"
+      height="<%= @square_size - 2 %>"
+      width="<%= @square_size - 2 %>"
+    />
+    <% end %>
+
+    <%= for {x, y} <- body_part_locations do %>
+    <rect
+      x="<%= x + 1%>" y="<%= y + 1%>"
+      style="fill:#777"
+      height="<%= @square_size - 2 %>"
+      width="<%= @square_size - 2 %>"
+    />
+    <% end %>
+  </svg>
+  <%= if @game_over do %>
+    <button phx-click="restart_game">Game over - Click to restart (Space)</button>
+  <% end %>
+</div>
