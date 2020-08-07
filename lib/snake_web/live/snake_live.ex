@@ -22,13 +22,18 @@ defmodule SnakeWeb.SnakeLive do
     :timer.send_interval(100, self(), :tick)
     {:ok, assign(socket,
       snake: snake,
-      fruits: [initial_fruit]
+      fruits: [initial_fruit],
+      points: 0
     )}
   end
 
   @impl true
   def handle_info(:tick, socket) do
-    %{fruits: fruits, snake: snake} = socket.assigns
+    %{
+      fruits: fruits,
+      snake: snake,
+      points: points
+    } = socket.assigns
 
     %SnakeBody{body: [snake_head | _tail]} = snake
 
@@ -41,15 +46,24 @@ defmodule SnakeWeb.SnakeLive do
       consumed_fruit
     )
 
-    updated_fruits = if consumed_fruit do
-      filtered_fruits = fruits
-      |> Enum.filter(fn %Fruit{location: location} -> location != snake_head end)
-      [FruitHandler.generate_fruit(@squares_width, @squares_height) | filtered_fruits]
-    else
-      fruits
+    updated_points = case consumed_fruit do
+      true ->  points + 1
+      false -> points
     end
 
-    {:noreply, assign(socket, %{snake: moved_snake, fruits: updated_fruits})}
+    updated_fruits = case consumed_fruit do
+      true  ->
+        filtered_fruits = fruits
+        |> Enum.filter(fn %Fruit{location: location} -> location != snake_head end)
+        [FruitHandler.generate_fruit(@squares_width, @squares_height) | filtered_fruits]
+      false -> fruits
+    end
+
+    {:noreply, assign(socket, %{
+      snake: moved_snake,
+      fruits: updated_fruits,
+      points: updated_points
+    })}
   end
 
   @impl true
@@ -82,7 +96,7 @@ defmodule SnakeWeb.SnakeLive do
 
     ~L"""
       <div phx-window-keydown="keydown">
-        <h1>Snake live<h1>
+        <h1>Points: <%= @points %><h1>
         <%= raw svg_head() %>
         <%= raw fruit_shapes %>
         <%= raw body_rects %>
