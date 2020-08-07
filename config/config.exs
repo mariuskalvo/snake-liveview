@@ -8,7 +8,7 @@
 use Mix.Config
 
 config :snake,
-  ecto_repos: [Snake.Repo]
+  ecto_repos: []
 
 # Configures the endpoint
 config :snake, SnakeWeb.Endpoint,

@@ -7,8 +7,6 @@ defmodule Snake.Application do
 
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      Snake.Repo,
       # Start the Telemetry supervisor
       SnakeWeb.Telemetry,
       # Start the PubSub system
