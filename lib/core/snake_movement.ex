@@ -30,11 +30,18 @@ defmodule Snake.Core.SnakeMovement do
     }
   end
 
-  defp move_down(x, y, height), do:   {x, rem(y + 1, height)}
+  defp move_down(x, y, height) do
+    {x, rem(y + 1, height)}
+  end
+
   defp move_up(x, y, height) do
     if y <= 0, do: {x, height - 1}, else: {x, y - 1}
   end
-  defp move_right(x, y, width), do:  {rem(x + 1, width), y}
+
+  defp move_right(x, y, width) do
+    {rem(x + 1, width), y}
+  end
+
   defp move_left(x, y, width) do
     if x <= 0, do: {width - 1, y}, else: {x - 1, y}
   end
