@@ -7,32 +7,49 @@
   |> Enum.map(fn {x, y} -> {x * @square_size, y * @square_size} end)
 %>
 
-<h1>Points: <%= @points %></h1>
-<div phx-window-keydown="keydown">
-  <svg
-    style="background: lightgray;"
-    width="<%= @square_size * @squares_width %>px"
-    height="<%= @square_size * @squares_height %>px"
-  >
-    <%= for {x, y} <- fruit_locations do %>
-    <rect
-      x="<%= x + 1%>" y="<%= y + 1%>"
-      style="fill:red"
-      height="<%= @square_size - 2 %>"
-      width="<%= @square_size - 2 %>"
-    />
-    <% end %>
+  <h1 class="points-counter">Points: <%= @points %></h1>
 
-    <%= for {x, y} <- body_part_locations do %>
-    <rect
-      x="<%= x + 1%>" y="<%= y + 1%>"
-      style="fill:#777"
-      height="<%= @square_size - 2 %>"
-      width="<%= @square_size - 2 %>"
-    />
-    <% end %>
-  </svg>
-  <%= if @game_over do %>
-    <button phx-click="restart_game">Game over - Click to restart (Space)</button>
-  <% end %>
-</div>
+  <div phx-window-keydown="keydown" class="snake-canvas-container">
+    <svg
+      style="background: #dbdbdb;"
+      width="<%= @square_size * @squares_width %>px"
+      height="<%= @square_size * @squares_height %>px"
+    >
+      <%= for x <- 0..(@squares_width - 1), y <- 0..(@squares_height - 1) do %>
+        <rect
+          x="<%= x * @square_size%>" y="<%= y * @square_size%>"
+          style="fill:#ededed"
+          height="<%= @square_size - 2 %>"
+          width="<%= @square_size - 2 %>"
+        />
+      <% end %>
+
+      <%= for {x, y} <- fruit_locations do %>
+      <rect
+        x="<%= x + 1%>" y="<%= y + 1%>"
+        style="fill:#f14668"
+        height="<%= @square_size - 2 %>"
+        width="<%= @square_size - 2 %>"
+        rx="5" ry="5"
+      />
+      <% end %>
+
+      <%= for {x, y} <- body_part_locations do %>
+      <rect
+        x="<%= x + 1%>" y="<%= y + 1%>"
+        style="fill:#3273dc"
+        height="<%= @square_size - 2 %>"
+        width="<%= @square_size - 2 %>"
+        rx="2" ry="2"
+
+      />
+      <% end %>
+    </svg>
+    <div>
+      <%= if @game_over do %>
+        <div class="buttons">
+          <button class="button is-primary is-large" phx-click="restart_game">Game over - Click to restart (Space)</button>
+        </div>
+      <% end %>
+    </div>
+  </div>

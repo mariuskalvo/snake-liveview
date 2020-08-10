@@ -2,8 +2,8 @@ defmodule Snake.Core.GameHandler do
   alias Snake.Core.{SnakeBody, SnakeMovement, FruitHandler, CollisionHandler}
 
   @square_size 20
-  @squares_width 40
-  @squares_height 22
+  @squares_width 50
+  @squares_height 30
   @timer_interval_ms 60
   @initial_snake_length 15
   @spawn_extra_fruit_probability 0.015
