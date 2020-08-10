@@ -16,9 +16,7 @@ defmodule SnakeWeb.Router do
 
   scope "/", SnakeWeb do
     pipe_through :browser
-
-    live "/", PageLive, :index
-    live "/snake", SnakeLive
+    live "/", SnakeLive
   end
 
   # Other scopes may use custom stacks.
