@@ -66,7 +66,7 @@ defmodule Snake.Core.GameHandler do
     end
 
     updated_fruits = fruits
-    |> FruitHandler.handle_consumed_fruit(snake_head, window_size)
+    |> FruitHandler.handle_consumed_fruit(snake_head, window_size, consumed_fruit)
     |> FruitHandler.maybe_add_Fruit(@spawn_extra_fruit_probability, window_size)
 
     %{

@@ -15,9 +15,8 @@ defmodule Snake.Core.FruitHandler do
     end)
   end
 
-  @spec handle_consumed_fruit([Fruit.t()], SnakeBody.point(), Fruit.point()) :: [Fruit.t()]
-  def handle_consumed_fruit(fruits, snake_head, window_size) do
-    consumed = consumed_fruit?(snake_head, fruits)
+  @spec handle_consumed_fruit([Fruit.t()], SnakeBody.point(), Fruit.point(), boolean()) :: [Fruit.t()]
+  def handle_consumed_fruit(fruits, snake_head, window_size, consumed) do
     case consumed do
       true  -> replace_consumed_fruit(fruits, snake_head, window_size)
       false -> fruits
