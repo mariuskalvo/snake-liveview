@@ -8,7 +8,7 @@ defmodule Snake.Core.GameHandler do
   @initial_snake_length 15
   @spawn_extra_fruit_probability 0.015
 
-  def get_initial_state() do
+  def setup_initial_state() do
     initial_fruit = FruitHandler.generate_fruit(
       @squares_width,
       @squares_height

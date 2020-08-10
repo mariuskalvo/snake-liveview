@@ -6,7 +6,7 @@ defmodule SnakeWeb.SnakeLive do
   def mount(_params, _session, socket) do
     {:ok, assign(socket,
       Map.merge(
-        GameHandler.get_initial_state(),
+        GameHandler.setup_initial_state(),
         GameHandler.get_config()
       ))
     }
@@ -22,7 +22,7 @@ defmodule SnakeWeb.SnakeLive do
   def handle_event("restart_game", _value, socket) do
     {:noreply, assign(socket,
       Map.merge(
-        GameHandler.get_initial_state(),
+        GameHandler.setup_initial_state(),
         GameHandler.get_config()
       ))
     }
