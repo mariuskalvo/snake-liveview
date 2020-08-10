@@ -1,11 +1,12 @@
 defmodule Snake.Core.GameHandler do
-  alias Snake.Core.{SnakeBody, SnakeMovement, FruitHandler, Fruit, CollisionHandler}
+  alias Snake.Core.{SnakeBody, SnakeMovement, FruitHandler, CollisionHandler}
 
   @square_size 20
   @squares_width 40
   @squares_height 22
   @timer_interval_ms 60
   @initial_snake_length 15
+  @spawn_extra_fruit_probability 0.015
 
   def get_initial_state() do
     initial_fruit = FruitHandler.generate_fruit(
@@ -43,8 +44,8 @@ defmodule Snake.Core.GameHandler do
       timer_reference: timer_reference
     } = game_state
 
+    window_size = {@squares_width, @squares_height}
     %SnakeBody{body: [snake_head | _tail]} = snake
-
     consumed_fruit = FruitHandler.consumed_fruit?(snake_head, fruits)
 
     moved_snake = SnakeMovement.move(
@@ -64,13 +65,9 @@ defmodule Snake.Core.GameHandler do
       false -> points
     end
 
-    updated_fruits = case consumed_fruit do
-      true  ->
-        filtered_fruits = fruits
-        |> Enum.filter(fn %Fruit{location: location} -> location != snake_head end)
-        [FruitHandler.generate_fruit(@squares_width, @squares_height) | filtered_fruits]
-      false -> fruits
-    end
+    updated_fruits = fruits
+    |> FruitHandler.handle_consumed_fruit(snake_head, window_size)
+    |> FruitHandler.maybe_add_Fruit(@spawn_extra_fruit_probability, window_size)
 
     %{
       snake: moved_snake,

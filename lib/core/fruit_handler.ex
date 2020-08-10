@@ -15,4 +15,29 @@ defmodule Snake.Core.FruitHandler do
     end)
   end
 
+  @spec handle_consumed_fruit([Fruit.t()], SnakeBody.point(), Fruit.point()) :: [Fruit.t()]
+  def handle_consumed_fruit(fruits, snake_head, window_size) do
+    consumed = consumed_fruit?(snake_head, fruits)
+    case consumed do
+      true  -> replace_consumed_fruit(fruits, snake_head, window_size)
+      false -> fruits
+    end
+  end
+
+  @spec replace_consumed_fruit([Fruit.t()], Fruit.point(), Fruit.point()) :: [Fruit.t()]
+  def replace_consumed_fruit(fruits, snake_head, {width, height}) do
+    fruits
+    |> Enum.filter(fn %Fruit{location: location} -> location != snake_head end)
+    |> (&([generate_fruit(width, height) | &1])).()
+  end
+
+  @spec maybe_add_Fruit([Fruit.t()], float(), Fruit.point()) :: [Fruit.t()]
+  def maybe_add_Fruit(fruits, add_probability, {width, height}) do
+    if :rand.uniform() < add_probability do
+      [generate_fruit(width, height) | fruits]
+    else
+      fruits
+    end
+  end
+
 end
